@@ -1,0 +1,5 @@
+BusBuddy Coupon Terms & Conditions:
+1. Only one coupon code can be applied per ticket booking.
+2. Percentage discounts are strictly subject to the maximum discount cap specified on the coupon.
+3. Route-specific coupons (such as BLR200) apply only to the exact source-destination pair and eligible bus category.
+4. Expired coupons or bookings below the minimum fare threshold are automatically rejected by the billing engine.

@@ -1,0 +1,32 @@
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Allow the example template
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Generated database
+*.db
+*.sqlite
+*.sqlite3
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDE files
+.vscode/
+.idea/
+
+# Operating system
+.DS_Store
+Thumbs.db

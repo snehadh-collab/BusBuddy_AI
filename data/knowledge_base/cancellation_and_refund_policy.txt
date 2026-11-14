@@ -1,0 +1,6 @@
+BusBuddy Simulated Cancellation & Refund Policy:
+1. More than 24 hours before departure: 90% refund of base fare (10% cancellation fee).
+2. Between 12 hours and 24 hours before departure: 75% refund of base fare.
+3. Between 2 hours and 12 hours before departure: 50% refund of base fare.
+4. Less than 2 hours before departure: No refund is permitted.
+5. Refunds are credited back to the original UPI/card payment source within 3 to 5 working days.
