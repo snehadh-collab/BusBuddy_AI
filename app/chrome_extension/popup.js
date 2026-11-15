@@ -1,7 +1,31 @@
 const COUPONS = [
   {
+    code: "CASH300",
+    title: "Up to ₹300 off on Karnataka, Tamil Nadu & Kerala routes",
+    type: "percent",
+    value: 20,
+    maxCap: 300,
+    minFare: 500,
+    newUserOnly: false,
+    route: "Chennai-Bangalore",
+    busType: "ALL",
+    payment: "ALL",
+  },
+  {
+    code: "PRIMODAY",
+    title: "Up to ₹200 off on Primo / AC Sleeper operators",
+    type: "percent",
+    value: 15,
+    maxCap: 200,
+    minFare: 800,
+    newUserOnly: false,
+    route: "ALL",
+    busType: "AC Sleeper",
+    payment: "ALL",
+  },
+  {
     code: "FIRST",
-    title: "Flat ₹250 off first booking",
+    title: "Up to ₹250 off on first bus booking (New Users)",
     type: "flat",
     value: 250,
     maxCap: 250,
@@ -12,48 +36,24 @@ const COUPONS = [
     payment: "ALL",
   },
   {
-    code: "BLR200",
-    title: "20% off up to ₹200 on Chennai–Bangalore AC Sleeper",
+    code: "FESTIVE300",
+    title: "Up to ₹300 off on bus tickets (Limited Sale)",
     type: "percent",
-    value: 20,
-    maxCap: 200,
-    minFare: 1000,
-    newUserOnly: false,
-    route: "Chennai-Bangalore",
-    busType: "AC Sleeper",
-    payment: "ALL",
-  },
-  {
-    code: "SLEEPER15",
-    title: "15% off up to ₹180 on AC Sleeper buses",
-    type: "percent",
-    value: 15,
-    maxCap: 180,
-    minFare: 900,
-    newUserOnly: false,
-    route: "ALL",
-    busType: "AC Sleeper",
-    payment: "ALL",
-  },
-  {
-    code: "UPI125",
-    title: "Flat ₹125 cashback on UPI payments",
-    type: "flat",
-    value: 125,
-    maxCap: 125,
-    minFare: 750,
+    value: 12,
+    maxCap: 300,
+    minFare: 600,
     newUserOnly: false,
     route: "ALL",
     busType: "ALL",
-    payment: "UPI",
+    payment: "ALL",
   },
   {
-    code: "SAVE10",
-    title: "10% off up to ₹150 on bookings above ₹800",
+    code: "RED500",
+    title: "10% off up to ₹250 + cashback on bus tickets",
     type: "percent",
     value: 10,
-    maxCap: 150,
-    minFare: 800,
+    maxCap: 250,
+    minFare: 700,
     newUserOnly: false,
     route: "ALL",
     busType: "ALL",
@@ -61,7 +61,7 @@ const COUPONS = [
   },
 ];
 
-let currentBestCode = "BLR200";
+let currentBestCode = "CASH300";
 
 function evaluateCoupons() {
   const perSeat = parseFloat(document.getElementById("fareInput").value) || 0;
@@ -146,23 +146,30 @@ function copyAndInjectCode(code, buttonEl) {
   if (!code) return;
   navigator.clipboard.writeText(code);
   const original = buttonEl.textContent;
-  buttonEl.textContent = "Copied!";
+  buttonEl.textContent = "Applied!";
   setTimeout(() => (buttonEl.textContent = original), 1500);
 
-  // If active tab is redbus.in, attempt to auto-fill any visible promo/coupon input field
   if (chrome && chrome.tabs) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0] && tabs[0].url && tabs[0].url.includes("redbus.in")) {
         chrome.scripting.executeScript({
           target: { tabId: tabs[0].id },
           func: (promo) => {
+            // Find the RedBus coupon input box (even if React-controlled)
             const inputs = Array.from(document.querySelectorAll("input"));
             const couponBox = inputs.find((el) =>
-              (el.placeholder + el.name + el.id).toLowerCase().match(/coupon|promo|offer|discount/)
+              (el.placeholder + el.name + el.id + el.ariaLabel).toLowerCase().match(/coupon|promo|offer|discount/)
             );
             if (couponBox) {
-              couponBox.value = promo;
+              const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+              nativeSetter.call(couponBox, promo);
               couponBox.dispatchEvent(new Event("input", { bubbles: true }));
+              couponBox.dispatchEvent(new Event("change", { bubbles: true }));
+
+              // Click the Apply button next to the coupon input if visible
+              const buttons = Array.from(document.querySelectorAll("button, span, div"));
+              const applyBtn = buttons.find((b) => b.textContent.trim().toLowerCase() === "apply");
+              if (applyBtn) applyBtn.click();
             }
           },
           args: [code],
