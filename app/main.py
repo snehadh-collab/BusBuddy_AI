@@ -3,6 +3,7 @@ from pathlib import Path
 from datetime import date, timedelta
 import uuid
 
+
 ROOT_DIR = Path(__file__).resolve().parent.parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
@@ -18,6 +19,7 @@ from busbuddy.recommendations import (
     recommend_buses,
 )
 from busbuddy.coupon_engine import get_available_coupons, find_best_coupon
+from busbuddy.coupon_sync import sync_live_coupons
 from busbuddy.rag.retriever import query_travel_faq
 from busbuddy.agent import BusBuddyAgent
 
@@ -141,15 +143,21 @@ patterns = get_user_profile_and_patterns("U101")
 # TAB 1: REAL BUS TICKET BOOKING FLOW + EMBEDDED AI COPILOT
 # =====================================================================
 with tab_book:
-    # Smart AI Habit Nudge Banner (What RedBus doesn't have!)
-    st.markdown(f"""
-    <div class="ai-nudge">
-        <strong>✨ BusBuddy AI Habit Detection:</strong> Welcome back, <b>{patterns['user']['name']}</b>!
-        You booked <b>{patterns['top_route']}</b> ({patterns['top_route_frequency']}) mostly in
-        <b>{patterns['preferred_bus_type']}</b> ({patterns['bus_type_frequency']}) during <b>{patterns['preferred_slot']}</b> hours.
-        Best promo codes are auto-applied to every bus below!
-    </div>
-    """, unsafe_allow_html=True)
+    sync_col1, sync_col2 = st.columns([3.5, 1])
+    with sync_col1:
+        st.markdown(f"""
+        <div class="ai-nudge">
+            <strong>✨ BusBuddy AI Habit Detection:</strong> Welcome back, <b>{patterns['user']['name']}</b>!
+            You booked <b>{patterns['top_route']}</b> ({patterns['top_route_frequency']}) mostly in
+            <b>{patterns['preferred_bus_type']}</b> ({patterns['bus_type_frequency']}) during <b>{patterns['preferred_slot']}</b> hours.
+        </div>
+        """, unsafe_allow_html=True)
+    with sync_col2:
+        st.write("")
+        if st.button("🔄 Sync Live Coupons", use_container_width=True):
+            sync_info = sync_live_coupons()
+            st.toast(f"Synced {sync_info['synced_coupons']} active Nov 2026 coupons!")
+            st.rerun()
 
     # Search Bar
     with st.container(border=True):
