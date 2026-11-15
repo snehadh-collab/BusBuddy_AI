@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BusBuddy AI</title>
+  <style>
+    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body {
+      width: 390px;
+      margin: 0;
+      padding: 14px;
+      background: #141413;
+      color: #F5F5F4;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .header h2 {
+      margin: 0;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot {
+      width: 11px;
+      height: 11px;
+      background: #D84E55;
+      border-radius: 3px;
+      display: inline-block;
+    }
+    .badge {
+      background: #27272A;
+      color: #A78BFA;
+      border: 1px solid #4C1D95;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 99px;
+      font-weight: 600;
+    }
+    .subtitle {
+      font-size: 11.5px;
+      color: #A1A1AA;
+      margin: 0 0 10px 0;
+    }
+    .habit-banner {
+      background: #1E1B4B;
+      border: 1px solid #4338CA;
+      color: #E0E7FF;
+      font-size: 11px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 10.5px;
+      color: #A1A1AA;
+      margin-bottom: 3px;
+    }
+    input, select {
+      width: 100%;
+      background: #1F1F23;
+      border: 1px solid #3F3F46;
+      color: #F4F4F5;
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+    }
+    .best-card {
+      background: linear-gradient(135deg, #064E3B 0%, #022C22 100%);
+      border: 1px solid #10B981;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .best-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #6EE7B7;
+      font-weight: 700;
+    }
+    .save-amount {
+      font-size: 24px;
+      font-weight: 800;
+      color: #ECFDF5;
+      margin: 3px 0;
+    }
+    .apply-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #D1FAE5;
+    }
+    .code-pill {
+      background: #065F46;
+      border: 1px dashed #34D399;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+    .copy-btn {
+      background: #10B981;
+      color: #022C22;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .copy-btn:hover { background: #34D399; }
+    .section-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #D4D4D8;
+      margin-bottom: 6px;
+    }
+    .offer-item {
+      background: #1C1C1F;
+      border: 1px solid #27272A;
+      border-radius: 7px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+    }
+    .offer-item.ineligible {
+      opacity: 0.48;
+    }
+    .offer-desc { color: #A1A1AA; font-size: 10.5px; margin-top: 2px; }
+    .mini-copy {
+      background: #27272A;
+      color: #E4E4E7;
+      border: 1px solid #3F3F46;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2><span class="dot"></span> BusBuddy AI Coupon Finder</h2>
+    <span class="badge">USM + GenAI Agent</span>
+  </div>
+  <p class="subtitle">Detects booking habits & finds the highest valid discount on redBus.</p>
+
+  <div class="habit-banner" id="habitBanner">
+    <strong>AI Habit Insight:</strong> You booked <b>Chennai → Bangalore</b> (7/8 AC Sleeper, Night). Auto-matching best sleeper & route offers!
+  </div>
+
+  <div class="grid">
+    <div>
+      <label>Ticket fare (₹ per seat)</label>
+      <input type="number" id="fareInput" value="1200" min="100" step="50" />
+    </div>
+    <div>
+      <label>Seats</label>
+      <input type="number" id="seatsInput" value="1" min="1" max="6" />
+    </div>
+    <div>
+      <label>User type</label>
+      <select id="userType">
+        <option value="existing">Existing user (Achu)</option>
+        <option value="new">New user (First booking)</option>
+      </select>
+    </div>
+    <div>
+      <label>Bus type</label>
+      <select id="busType">
+        <option value="AC Sleeper">AC Sleeper</option>
+        <option value="AC Seater">AC Seater</option>
+        <option value="Non-AC Sleeper">Non-AC Sleeper</option>
+      </select>
+    </div>
+    <div>
+      <label>Payment method</label>
+      <select id="paymentMethod">
+        <option value="UPI">UPI / PhonePe / GPay</option>
+        <option value="CARD">Credit / Debit Card</option>
+      </select>
+    </div>
+    <div>
+      <label>Route / Operator</label>
+      <select id="routeSelect">
+        <option value="Chennai-Bangalore">Chennai → Bangalore</option>
+        <option value="Chennai-Coimbatore">Chennai → Coimbatore</option>
+        <option value="ALL">Other Route</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="best-card" id="bestCard">
+    <div class="best-label" id="bestLabel">BEST OFFER FOR YOU (REDBUS)</div>
+    <div class="save-amount" id="saveAmount">Save ₹200</div>
+    <div class="apply-row">
+      <span id="applyText">Apply <span class="code-pill" id="bestCode">BLR200</span> at checkout. Pay <b>₹1000</b> instead of ₹1200.</span>
+      <button class="copy-btn" id="copyBestBtn">Copy & Apply</button>
+    </div>
+  </div>
+
+  <div class="section-title" id="eligibleHeader">All Coupons Evaluated</div>
+  <div id="offersList"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "BusBuddy AI – RedBus Smart Coupon & Habit Agent",
+  "version": "1.0.0",
+  "description": "AI-powered coupon optimizer and travel habit assistant alongside redbus.in",
+  "permissions": ["activeTab", "scripting", "storage"],
+  "host_permissions": ["*://*.redbus.in/*"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "BusBuddy AI Coupon Finder"
+  }
+}
